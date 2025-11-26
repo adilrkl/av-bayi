@@ -1,11 +1,5 @@
-6. Ürün açıklama girilen kısım richt text olacak admin tarafında ve frontta da rich text desteği olmalı.<p>Atıcılık sporu için özel olarak üretilmiş, düşük geri tepmeli trap fişeği.</p> Bu şekilde gözüküyor frontta. Bu şekilde html render olarak gözükmeli.
-"Henüz blog yazısı bulunmuyor." uyarısı alıyorum. Bizim 3 tane blog yazımız vardı onları gösterelim silinmiş ise 3 tane blog yazısı ekleyelim ve blog detay sayfamıza yönlendirelim.
-Slider(Slaytlar) resimi link ile değilde upload sistemi ile almalı.
-
-"Öne Çıkan Ürünler
-En yeni ve en çok tercih edilen ürünlerimiz." Bu alana eklenilen ürünler admin tarafından eklenip çıkarılabilir olmalı dinamik olmalı yani.
-"Öne Çıkan Ürünler
-En yeni ve en çok tercih edilen ürünlerimiz." Bu alanda Tümünü gör butonuna tıklayınca 404 sayfasına gönderiyor o alan için sayfa olmalı.
+Giriş ve Kayıt ol adımlarından sonra kullanıcıya küçük geri bildirimler başarıyla kayıt oldunuz gibi, giriş yaptınız vs.
+İletişim linkine tıklayınca sayfaya yönlendirme yapılıyor ama Application error: a client-side exception has occurred while loading av-bayi-production.up.railway.app (see the browser console for more information). böyle bir hata alıyorum. refresh edince sayfa açılıyor.
 Sitenin en altına indiğimizde yukarı yönlendiren sağ altta küçük bir icon olsun.
  noicorcn_av veritabanına eklendi. 
  You have successfully created a database user named noicorcn_user_av. 

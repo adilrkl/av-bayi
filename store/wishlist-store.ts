@@ -20,6 +20,8 @@ interface WishlistState {
     totalItems: () => number
 }
 
+import { toast } from 'sonner'
+
 export const useWishlistStore = create<WishlistState>()(
     persist(
         (set, get) => ({
@@ -30,10 +32,12 @@ export const useWishlistStore = create<WishlistState>()(
 
                 if (!existingItem) {
                     set({ items: [...items, newItem] })
+                    toast.success("Ürün favorilere eklendi")
                 }
             },
             removeItem: (productId) => {
                 set({ items: get().items.filter(item => item.productId !== productId) })
+                toast.success("Ürün favorilerden çıkarıldı")
             },
             isInWishlist: (productId) => {
                 return get().items.some(item => item.productId === productId)

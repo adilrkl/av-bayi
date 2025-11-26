@@ -27,7 +27,7 @@ export async function Footer() {
                     {/* Column 1: About */}
                     <div>
                         <h3 className="font-heading text-2xl font-bold text-white mb-4">
-                            {settings?.siteName || "EMKAAV"}
+                            {settings?.siteName || "KALE AV"}
                         </h3>
                         <p className="text-sm leading-relaxed mb-6">
                             Türkiye'nin en kapsamlı av malzemeleri mağazası. Kaliteli ürünler, güvenli alışveriş ve uzman desteği ile hizmetinizdeyiz.

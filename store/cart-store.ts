@@ -20,6 +20,8 @@ interface CartState {
     subtotal: () => number
 }
 
+import { toast } from 'sonner'
+
 export const useCartStore = create<CartState>()(
     persist(
         (set, get) => ({
@@ -38,10 +40,12 @@ export const useCartStore = create<CartState>()(
                     })
                 } else {
                     set({ items: [...items, newItem] })
+                    toast.success("Ürün sepete eklendi")
                 }
             },
             removeItem: (productId) => {
                 set({ items: get().items.filter(item => item.productId !== productId) })
+                toast.success("Ürün sepetten çıkarıldı")
             },
             updateQuantity: (productId, quantity) => {
                 if (quantity <= 0) {

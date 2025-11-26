@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
+import { toast } from "sonner"
 
 const loginSchema = z.object({
     email: z.string().email("Geçerli bir email adresi giriniz."),
@@ -42,6 +43,7 @@ export function LoginForm() {
             if (result?.error) {
                 setError("Email veya şifre hatalı.")
             } else {
+                toast.success("Başarıyla giriş yapıldı")
                 // Force a hard redirect to ensure session is updated
                 window.location.href = "/"
             }

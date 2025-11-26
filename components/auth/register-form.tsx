@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
+import { toast } from "sonner"
 
 const registerSchema = z.object({
     name: z.string().min(2, "Ad Soyad en az 2 karakter olmalıdır."),
@@ -52,6 +53,7 @@ export function RegisterForm() {
             if (!result.success) {
                 setError(result.error)
             } else {
+                toast.success("Kayıt başarılı! Giriş yapabilirsiniz.")
                 router.push("/login?registered=true")
             }
         } catch (error) {
