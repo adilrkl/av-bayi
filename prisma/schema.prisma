@@ -39,7 +39,7 @@ model Product {
   id            String      @id @default(cuid())
   name          String
   slug          String      @unique
-  description   String
+  description   String      @db.Text
   price         Decimal
   discountPrice Decimal?
   stock         Int
@@ -48,7 +48,7 @@ model Product {
   brandId       String?
   variants      String?
   youtubeUrl    String?
-  features      String?
+  features      String?     @db.Text
   isFeatured    Boolean     @default(false)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -121,7 +121,7 @@ model BlogPost {
   id          String   @id @default(cuid())
   title       String
   slug        String   @unique
-  content     String
+  content     String   @db.Text
   excerpt     String?
   thumbnail   String?
   authorId    String
@@ -165,8 +165,8 @@ model Settings {
   contactPhone     String?
   contactAddress   String?
   updatedAt        DateTime @updatedAt
-  announcementText String?
-  homepageBenefits String?
+  announcementText String?  @db.Text
+  homepageBenefits String?  @db.Text
 }
 
 model ContactMessage {

@@ -139,6 +139,7 @@ export async function POST(req: Request) {
             return new NextResponse("Invalid request data", { status: 422 })
         }
 
-        return new NextResponse("Internal Server Error", { status: 500 })
+        const errorMessage = error instanceof Error ? error.message : "Unknown error"
+        return new NextResponse(`Internal Server Error: ${errorMessage}`, { status: 500 })
     }
 }
