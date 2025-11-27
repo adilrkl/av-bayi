@@ -1,10 +1,10 @@
 -- AlterTable
-ALTER TABLE `blogpost` MODIFY `content` TEXT NOT NULL;
+ALTER TABLE `BlogPost` MODIFY `content` TEXT NOT NULL;
 
 -- AlterTable
-ALTER TABLE `product` MODIFY `description` TEXT NOT NULL,
+ALTER TABLE `Product` MODIFY `description` TEXT NOT NULL,
     MODIFY `features` TEXT NULL;
 
 -- AlterTable
-ALTER TABLE `settings` MODIFY `announcementText` TEXT NULL,
+ALTER TABLE `Settings` MODIFY `announcementText` TEXT NULL,
     MODIFY `homepageBenefits` TEXT NULL;
