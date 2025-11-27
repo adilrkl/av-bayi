@@ -17,12 +17,27 @@ import {
 import { Input } from "@/components/ui/input"
 import { ImageUpload } from "@/components/admin/image-upload"
 import { toast } from "sonner"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { useEffect } from "react"
 
 const categorySchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     slug: z.string().min(2, "Slug must be at least 2 characters"),
     image: z.string().optional(),
+    parentId: z.string().nullable().optional(),
 })
+
+interface Category {
+    id: string
+    name: string
+    children?: Category[]
+}
 
 interface CategoryFormProps {
     initialData?: {
@@ -30,6 +45,7 @@ interface CategoryFormProps {
         name: string
         slug: string
         image?: string
+        parentId?: string | null
     }
 }
 
@@ -43,8 +59,27 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
             name: "",
             slug: "",
             image: "",
+            parentId: null,
         },
     })
+
+    const [categories, setCategories] = useState<Category[]>([])
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch("/api/categories")
+                const data = await response.json()
+                if (data.success) {
+                    setCategories(data.data)
+                }
+            } catch (error) {
+                console.error("Failed to fetch categories", error)
+            }
+        }
+
+        fetchCategories()
+    }, [])
 
     async function onSubmit(values: z.infer<typeof categorySchema>) {
         setIsLoading(true)
@@ -55,12 +90,17 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
 
             const method = initialData ? "PATCH" : "POST"
 
+            const submitData = {
+                ...values,
+                parentId: values.parentId === "null" ? null : values.parentId,
+            }
+
             const response = await fetch(url, {
                 method: method,
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify(submitData),
             })
 
             if (!response.ok) {
@@ -109,6 +149,39 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
                         )}
                     />
                 </div>
+
+                <FormField
+                    control={form.control}
+                    name="parentId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Üst Kategori</FormLabel>
+                            <Select
+                                disabled={isLoading}
+                                onValueChange={field.onChange}
+                                value={field.value || undefined}
+                                defaultValue={field.value || undefined}
+                            >
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Üst kategori seçin (Opsiyonel)" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="null">Yok (Ana Kategori)</SelectItem>
+                                    {categories
+                                        .filter((category) => category.id !== initialData?.id) // Prevent selecting self as parent
+                                        .map((category) => (
+                                            <SelectItem key={category.id} value={category.id}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}

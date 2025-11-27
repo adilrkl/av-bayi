@@ -112,6 +112,8 @@ export function ProductForm({ categories, brands = [], initialData }: ProductFor
             })
 
             if (!response.ok) {
+                const errorData = await response.text()
+                console.error("API Error:", errorData)
                 throw new Error(initialData ? "Failed to update product" : "Failed to create product")
             }
 

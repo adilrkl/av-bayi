@@ -134,6 +134,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json(product)
     } catch (error) {
+        console.error('Error creating product:', error)
         if (error instanceof z.ZodError) {
             return new NextResponse("Invalid request data", { status: 422 })
         }

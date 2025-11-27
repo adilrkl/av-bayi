@@ -8,6 +8,7 @@ const categorySchema = z.object({
     name: z.string(),
     slug: z.string(),
     image: z.string().optional(),
+    parentId: z.string().nullable().optional(),
 })
 
 export async function PATCH(
@@ -33,6 +34,7 @@ export async function PATCH(
                 name: body.name,
                 slug: body.slug,
                 image: body.image,
+                parentId: body.parentId,
             },
         })
 
