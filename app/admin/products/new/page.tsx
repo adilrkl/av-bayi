@@ -3,10 +3,17 @@ import { ProductForm } from "@/components/admin/product-form"
 
 async function getCategories() {
     return await prisma.category.findMany({
-        select: {
-            id: true,
-            name: true,
+        where: {
+            parentId: null
         },
+        include: {
+            children: {
+                include: {
+                    children: true
+                }
+            }
+        },
+        orderBy: { name: 'asc' }
     })
 }
 

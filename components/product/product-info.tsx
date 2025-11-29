@@ -72,7 +72,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 stock: product.stock,
             })
             setIsLiked(true)
-            toast.success("Favorilere eklendi")
+
         }
     }
 
@@ -106,6 +106,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
                     </span>
                 )}
             </div>
+
+            <div className="h-px bg-border my-2" />
+
+            {/* Description */}
+            <div
+                className="prose prose-sm max-w-none text-muted-foreground"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+            />
 
             <div className="h-px bg-border my-2" />
 

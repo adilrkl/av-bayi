@@ -42,8 +42,14 @@ const productSchema = z.object({
     isFeatured: z.boolean(),
 })
 
+interface Category {
+    id: string
+    name: string
+    children?: Category[]
+}
+
 interface ProductFormProps {
-    categories: { id: string; name: string }[]
+    categories: Category[]
     brands?: { id: string; name: string }[]
     initialData?: {
         id: string
@@ -62,9 +68,22 @@ interface ProductFormProps {
     }
 }
 
+function flattenCategories(categories: Category[], parentName = ""): { id: string, name: string }[] {
+    return categories.reduce((acc, category) => {
+        const fullName = parentName ? `${parentName} > ${category.name}` : category.name
+        acc.push({ id: category.id, name: fullName })
+        if (category.children && category.children.length > 0) {
+            acc.push(...flattenCategories(category.children, fullName))
+        }
+        return acc
+    }, [] as { id: string, name: string }[])
+}
+
 export function ProductForm({ categories, brands = [], initialData }: ProductFormProps) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+
+    const flattenedCategories = flattenCategories(categories)
 
     const form = useForm<z.infer<typeof productSchema>>({
         resolver: zodResolver(productSchema),
@@ -256,7 +275,7 @@ export function ProductForm({ categories, brands = [], initialData }: ProductFor
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {categories.map((category) => (
+                                        {flattenedCategories.map((category) => (
                                             <SelectItem key={category.id} value={category.id}>
                                                 {category.name}
                                             </SelectItem>
@@ -278,16 +297,16 @@ export function ProductForm({ categories, brands = [], initialData }: ProductFor
                                         value={field.value ? field.value.split(",").filter(Boolean) : []}
                                         disabled={isLoading}
                                         onChange={(url) => {
-                                            console.log("New image URL received:", url)
                                             const currentImages = field.value ? field.value.split(",").filter(Boolean) : []
-                                            console.log("Current images:", currentImages)
                                             const newValue = [...currentImages, url].join(",")
-                                            console.log("Setting images to:", newValue)
                                             field.onChange(newValue)
                                         }}
                                         onRemove={(url) => {
                                             const currentImages = field.value ? field.value.split(",").filter(Boolean) : []
                                             field.onChange(currentImages.filter((image) => image !== url).join(","))
+                                        }}
+                                        onReorder={(newImages) => {
+                                            field.onChange(newImages.join(","))
                                         }}
                                     />
                                 </FormControl>

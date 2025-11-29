@@ -1,10 +1,11 @@
 "use client"
 
 import { useSession, signOut } from "next-auth/react"
-import { redirect } from "next/navigation"
+import { redirect, usePathname } from "next/navigation"
 import Link from "next/link"
 import { User, MapPin, Package, LogOut } from "lucide-react"
 import { useEffect } from "react"
+import { cn } from "@/lib/utils"
 
 export default function ProfileLayout({
     children,
@@ -12,6 +13,7 @@ export default function ProfileLayout({
     children: React.ReactNode
 }) {
     const { data: session, status } = useSession()
+    const pathname = usePathname()
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -48,15 +50,33 @@ export default function ProfileLayout({
                         </div>
 
                         <nav className="space-y-1">
-                            <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors">
+                            <Link
+                                href="/profile"
+                                className={cn(
+                                    "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                                    pathname === "/profile" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+                                )}
+                            >
                                 <User className="h-4 w-4" />
                                 Profil Bilgileri
                             </Link>
-                            <Link href="/profile/orders" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors">
+                            <Link
+                                href="/profile/orders"
+                                className={cn(
+                                    "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                                    pathname === "/profile/orders" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+                                )}
+                            >
                                 <Package className="h-4 w-4" />
                                 Siparişlerim
                             </Link>
-                            <Link href="/profile/addresses" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors">
+                            <Link
+                                href="/profile/addresses"
+                                className={cn(
+                                    "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                                    pathname === "/profile/addresses" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+                                )}
+                            >
                                 <MapPin className="h-4 w-4" />
                                 Adreslerim
                             </Link>

@@ -28,12 +28,30 @@ export function ProductGallery({ images }: ProductGalleryProps) {
     return (
         <div className="flex flex-col gap-4">
             {/* Main Image */}
-            <div className="aspect-square bg-white border rounded-lg overflow-hidden relative group">
+            {/* Main Image */}
+            <div
+                className="aspect-square bg-white border rounded-lg overflow-hidden relative group cursor-crosshair"
+                onMouseMove={(e) => {
+                    const { left, top, width, height } = e.currentTarget.getBoundingClientRect()
+                    const x = ((e.clientX - left) / width) * 100
+                    const y = ((e.clientY - top) / height) * 100
+                    e.currentTarget.style.setProperty('--x', `${x}%`)
+                    e.currentTarget.style.setProperty('--y', `${y}%`)
+                }}
+                style={{
+                    // @ts-ignore
+                    '--x': '50%',
+                    '--y': '50%'
+                }}
+            >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={selectedImage}
                     alt="Product"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain transition-transform duration-200 ease-out group-hover:scale-[2]"
+                    style={{
+                        transformOrigin: 'var(--x) var(--y)'
+                    }}
                 />
             </div>
 

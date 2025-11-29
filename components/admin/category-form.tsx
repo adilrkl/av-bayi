@@ -169,13 +169,29 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
                                 </FormControl>
                                 <SelectContent>
                                     <SelectItem value="null">Yok (Ana Kategori)</SelectItem>
-                                    {categories
-                                        .filter((category) => category.id !== initialData?.id) // Prevent selecting self as parent
-                                        .map((category) => (
-                                            <SelectItem key={category.id} value={category.id}>
-                                                {category.name}
-                                            </SelectItem>
-                                        ))}
+                                    {(() => {
+                                        const flattenCategories = (cats: Category[], level = 0): { id: string, name: string, level: number }[] => {
+                                            let flat: { id: string, name: string, level: number }[] = []
+                                            for (const cat of cats) {
+                                                flat.push({ id: cat.id, name: cat.name, level })
+                                                if (cat.children) {
+                                                    flat = [...flat, ...flattenCategories(cat.children, level + 1)]
+                                                }
+                                            }
+                                            return flat
+                                        }
+
+                                        return flattenCategories(categories)
+                                            .filter((category) => category.id !== initialData?.id)
+                                            .map((category) => (
+                                                <SelectItem key={category.id} value={category.id}>
+                                                    <span style={{ paddingLeft: `${category.level * 20}px` }}>
+                                                        {category.level > 0 && "- "}
+                                                        {category.name}
+                                                    </span>
+                                                </SelectItem>
+                                            ))
+                                    })()}
                                 </SelectContent>
                             </Select>
                             <FormMessage />

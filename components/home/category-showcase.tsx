@@ -5,18 +5,51 @@ import { ProductCard } from "@/components/product/product-card"
 import { serializeProduct } from "@/lib/utils"
 
 export async function CategoryShowcase() {
+    // 1. Fetch top categories with their children
     const categories = await prisma.category.findMany({
         where: { parentId: null },
-        take: 4, // Show top 4 categories
+        take: 4,
         orderBy: { name: 'asc' },
         include: {
-            products: {
-                take: 6,
-                orderBy: { createdAt: 'desc' },
-                include: { category: true, brand: true }
+            children: {
+                include: {
+                    children: true
+                }
             }
         }
     })
+
+    // 2. Fetch products for each category (including sub-categories)
+    const categoriesWithProducts = await Promise.all(categories.map(async (category) => {
+        // Collect all IDs
+        const categoryIds = [category.id]
+
+        if (category.children) {
+            category.children.forEach(child => {
+                categoryIds.push(child.id)
+                if (child.children) {
+                    child.children.forEach(grandChild => {
+                        categoryIds.push(grandChild.id)
+                    })
+                }
+            })
+        }
+
+        // Fetch products
+        const products = await prisma.product.findMany({
+            where: {
+                categoryId: { in: categoryIds }
+            },
+            take: 6,
+            orderBy: { createdAt: 'desc' },
+            include: { category: true, brand: true }
+        })
+
+        return {
+            ...category,
+            products
+        }
+    }))
 
     return (
         <section className="py-16 bg-muted/30">
@@ -25,7 +58,7 @@ export async function CategoryShowcase() {
                     Kategorileri <span className="text-secondary">Keşfet</span>
                 </h2>
 
-                {categories.map((category) => (
+                {categoriesWithProducts.map((category) => (
                     <div key={category.id} className="space-y-6">
                         <div className="flex items-center justify-between border-b pb-4">
                             <h3 className="text-2xl font-bold">{category.name}</h3>

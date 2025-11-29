@@ -19,10 +19,21 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     const minPrice = resolvedSearchParams.minPrice ? Number(resolvedSearchParams.minPrice) : undefined
     const maxPrice = resolvedSearchParams.maxPrice ? Number(resolvedSearchParams.maxPrice) : undefined
 
-    // Fetch Category
+    // Fetch Category with children (2 levels) AND parents for breadcrumb
     const category = await prisma.category.findUnique({
         where: { slug },
-        include: { children: true }
+        include: {
+            children: {
+                include: {
+                    children: true
+                }
+            },
+            parent: {
+                include: {
+                    parent: true
+                }
+            }
+        }
     })
 
     if (!category) {
@@ -32,15 +43,25 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     const brandsParam = resolvedSearchParams.brands as string
     const brandIds = brandsParam ? brandsParam.split(',') : []
 
-    // Build Filter
-    const where: any = {
-        categoryId: category.id // TODO: Handle recursive children categories
+    // Collect all category IDs (Self + Children + Grandchildren)
+    const categoryIds = [category.id]
+
+    // Add Level 1 Children
+    if (category.children) {
+        category.children.forEach(child => {
+            categoryIds.push(child.id)
+            // Add Level 2 Children (Grandchildren)
+            if (child.children) {
+                child.children.forEach(grandChild => {
+                    categoryIds.push(grandChild.id)
+                })
+            }
+        })
     }
 
-    // If category has children, include them in filter
-    if (category.children.length > 0) {
-        const childIds = category.children.map(c => c.id)
-        where.categoryId = { in: [category.id, ...childIds] }
+    // Build Filter
+    const where: any = {
+        categoryId: { in: categoryIds }
     }
 
     if (minPrice || maxPrice) {
@@ -72,12 +93,12 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
     const serializedProducts = products.map(serializeProduct)
 
-    // Fetch Brands for this category
+    // Fetch Brands for this category hierarchy
     const brands = await prisma.brand.findMany({
         where: {
             products: {
                 some: {
-                    categoryId: { in: [category.id, ...category.children.map(c => c.id)] }
+                    categoryId: { in: categoryIds }
                 }
             }
         },
@@ -86,9 +107,30 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* Breadcrumb (Simplified) */}
-            <div className="text-sm text-muted-foreground mb-6">
-                Anasayfa / {category.name}
+            {/* Breadcrumb */}
+            <div className="flex items-center text-sm text-muted-foreground mb-6">
+                <a href="/" className="hover:text-primary transition-colors">Anasayfa</a>
+
+                {category.parent?.parent && (
+                    <>
+                        <span className="mx-2">/</span>
+                        <a href={`/category/${category.parent.parent.slug}`} className="hover:text-primary transition-colors">
+                            {category.parent.parent.name}
+                        </a>
+                    </>
+                )}
+
+                {category.parent && (
+                    <>
+                        <span className="mx-2">/</span>
+                        <a href={`/category/${category.parent.slug}`} className="hover:text-primary transition-colors">
+                            {category.parent.name}
+                        </a>
+                    </>
+                )}
+
+                <span className="mx-2">/</span>
+                <span className="font-medium text-foreground">{category.name}</span>
             </div>
 
             <div className="flex flex-col lg:flex-row gap-8">

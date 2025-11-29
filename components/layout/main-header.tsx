@@ -249,14 +249,38 @@ export function MainHeader({ categories = [] }: MainHeaderProps) {
                                                     Tüm {category.name}
                                                 </Link>
                                                 {category.children?.map((child) => (
-                                                    <Link
-                                                        key={child.id}
-                                                        href={`/category/${child.slug}`}
-                                                        className="text-sm text-muted-foreground hover:text-foreground"
-                                                        onClick={() => setIsMobileMenuOpen(false)}
-                                                    >
-                                                        {child.name}
-                                                    </Link>
+                                                    child.children && child.children.length > 0 ? (
+                                                        <div key={child.id} className="flex flex-col space-y-2 pt-2">
+                                                            <Link
+                                                                href={`/category/${child.slug}`}
+                                                                className="text-sm font-semibold text-foreground"
+                                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                            >
+                                                                {child.name}
+                                                            </Link>
+                                                            <div className="flex flex-col space-y-2 pl-3 border-l-2 border-muted ml-1">
+                                                                {child.children.map((grandChild) => (
+                                                                    <Link
+                                                                        key={grandChild.id}
+                                                                        href={`/category/${grandChild.slug}`}
+                                                                        className="text-sm text-muted-foreground hover:text-foreground"
+                                                                        onClick={() => setIsMobileMenuOpen(false)}
+                                                                    >
+                                                                        {grandChild.name}
+                                                                    </Link>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <Link
+                                                            key={child.id}
+                                                            href={`/category/${child.slug}`}
+                                                            className="text-sm text-muted-foreground hover:text-foreground"
+                                                            onClick={() => setIsMobileMenuOpen(false)}
+                                                        >
+                                                            {child.name}
+                                                        </Link>
+                                                    )
                                                 ))}
                                             </div>
                                         </AccordionContent>

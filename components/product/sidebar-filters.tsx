@@ -25,14 +25,14 @@ export function SidebarFilters({ category, brands = [], minPrice, maxPrice }: Si
     const router = useRouter()
     const searchParams = useSearchParams()
 
-    const [priceRange, setPriceRange] = useState([minPrice || 0, maxPrice || 50000])
+    const [priceRange, setPriceRange] = useState([minPrice || 0, maxPrice || 500000])
     const [selectedBrands, setSelectedBrands] = useState<string[]>([])
 
     // Update local state when URL params change
     useEffect(() => {
         setPriceRange([
             Number(searchParams.get('minPrice')) || 0,
-            Number(searchParams.get('maxPrice')) || 50000
+            Number(searchParams.get('maxPrice')) || 500000
         ])
 
         const brandParam = searchParams.get('brands')
@@ -128,9 +128,9 @@ export function SidebarFilters({ category, brands = [], minPrice, maxPrice }: Si
                 <h3 className="font-bold mb-4">Fiyat Aralığı</h3>
                 <div className="space-y-4">
                     <Slider
-                        defaultValue={[0, 50000]}
+                        defaultValue={[0, 500000]}
                         value={priceRange}
-                        max={50000}
+                        max={500000}
                         step={100}
                         onValueChange={setPriceRange}
                         className="my-4"

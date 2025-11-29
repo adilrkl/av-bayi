@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { useWishlistStore } from "@/store/wishlist-store"
+import { useCartStore } from "@/store/cart-store"
+import { toast } from "sonner"
 import { useState, useEffect } from "react"
 interface ProductCardProps {
     product: any // Replace with proper type
@@ -77,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="absolute right-2 top-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 duration-300">
+                <div className="absolute right-2 top-2 flex flex-col gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all translate-x-0 md:translate-x-2 md:group-hover:translate-x-0 duration-300">
                     <Button
                         size="icon"
                         variant={isLiked ? "default" : "secondary"}
@@ -85,9 +87,6 @@ export function ProductCard({ product }: ProductCardProps) {
                         onClick={toggleWishlist}
                     >
                         <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
-                    </Button>
-                    <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full shadow-sm">
-                        <Eye className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
@@ -121,7 +120,20 @@ export function ProductCard({ product }: ProductCardProps) {
                         )}
                     </div>
 
-                    <Button size="icon" className="rounded-full bg-primary hover:bg-primary/90">
+                    <Button
+                        size="icon"
+                        className="rounded-full bg-primary hover:bg-primary/90"
+                        onClick={() => {
+                            useCartStore.getState().addItem({
+                                productId: product.id,
+                                name: product.name,
+                                price: product.discountPrice ? Number(product.discountPrice) : Number(product.price),
+                                image: mainImage,
+                                quantity: 1
+                            })
+                            toast.success("Ürün sepete eklendi!")
+                        }}
+                    >
                         <ShoppingCart className="h-4 w-4" />
                     </Button>
                 </div>

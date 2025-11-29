@@ -28,10 +28,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     // Build Filter
     const where: any = {
         OR: [
-            { name: { contains: query } },
-            { description: { contains: query } },
-            { category: { name: { contains: query } } },
-            { brand: { name: { contains: query } } }
+            { name: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
+            { category: { name: { contains: query, mode: 'insensitive' } } },
+            { brand: { name: { contains: query, mode: 'insensitive' } } }
         ]
     }
 

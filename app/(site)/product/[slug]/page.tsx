@@ -20,7 +20,15 @@ export default async function ProductPage(props: ProductPageProps) {
             slug: params.slug
         },
         include: {
-            category: true,
+            category: {
+                include: {
+                    parent: {
+                        include: {
+                            parent: true
+                        }
+                    }
+                }
+            },
             brand: true
         }
     })
@@ -47,8 +55,34 @@ export default async function ProductPage(props: ProductPageProps) {
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Breadcrumb */}
-            <div className="text-sm text-muted-foreground mb-6">
-                Anasayfa / {product.category.name} / {product.name}
+            <div className="flex items-center text-sm text-muted-foreground mb-6 flex-wrap">
+                <a href="/" className="hover:text-primary transition-colors">Anasayfa</a>
+
+                {product.category.parent?.parent && (
+                    <>
+                        <span className="mx-2">/</span>
+                        <a href={`/category/${product.category.parent.parent.slug}`} className="hover:text-primary transition-colors">
+                            {product.category.parent.parent.name}
+                        </a>
+                    </>
+                )}
+
+                {product.category.parent && (
+                    <>
+                        <span className="mx-2">/</span>
+                        <a href={`/category/${product.category.parent.slug}`} className="hover:text-primary transition-colors">
+                            {product.category.parent.name}
+                        </a>
+                    </>
+                )}
+
+                <span className="mx-2">/</span>
+                <a href={`/category/${product.category.slug}`} className="hover:text-primary transition-colors">
+                    {product.category.name}
+                </a>
+
+                <span className="mx-2">/</span>
+                <span className="font-medium text-foreground">{product.name}</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-16">
@@ -61,16 +95,10 @@ export default async function ProductPage(props: ProductPageProps) {
 
 
 
-            {/* Tabs: Description, Specs, Reviews, Video */}
+            {/* Tabs: Specs, Reviews, Video */}
             <div className="mb-16">
-                <Tabs defaultValue="description">
+                <Tabs defaultValue="specs">
                     <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent flex-wrap">
-                        <TabsTrigger
-                            value="description"
-                            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-8 py-3 font-bold text-lg"
-                        >
-                            Açıklama
-                        </TabsTrigger>
                         <TabsTrigger
                             value="specs"
                             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-8 py-3 font-bold text-lg"
@@ -86,12 +114,7 @@ export default async function ProductPage(props: ProductPageProps) {
                             </TabsTrigger>
                         )}
                     </TabsList>
-                    <TabsContent value="description" className="pt-6">
-                        <div
-                            className="prose max-w-none text-muted-foreground"
-                            dangerouslySetInnerHTML={{ __html: product.description }}
-                        />
-                    </TabsContent>
+
                     <TabsContent value="specs" className="pt-6">
                         <div className="text-muted-foreground">
                             {product.features ? (
